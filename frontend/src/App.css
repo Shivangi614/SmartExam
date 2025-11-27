@@ -140,6 +140,20 @@ nav button:hover {
 }
 
 /* Background with Shapes */
+/* ==================== HERO/HOME PAGE ==================== */
+.home-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 60px 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Background with Shapes */
 .home-container::before {
   content: '';
   position: absolute;
@@ -155,6 +169,7 @@ nav button:hover {
   position: relative;
   z-index: 2;
   max-width: 900px;
+  margin: 0 auto; /* Center the content */
 }
 
 .home-container h1 {
@@ -166,6 +181,7 @@ nav button:hover {
   letter-spacing: -2px;
   line-height: 1.1;
   animation: fadeInUp 0.8s ease;
+  text-align: center; /* Ensure heading is centered */
 }
 
 @keyframes fadeInUp {
@@ -181,12 +197,14 @@ nav button:hover {
 
 .home-container p {
   font-size: 1.4rem;
-  margin-bottom: 2.5rem;
+  margin: 0 auto 2.5rem; /* Center align with auto margins */
   color: rgba(255, 255, 255, 0.95);
   max-width: 700px;
   line-height: 1.8;
   font-weight: 400;
   animation: fadeInUp 0.8s ease 0.2s backwards;
+  text-align: center; /* Ensure paragraph is centered */
+  padding: 0 20px; /* Add padding for smaller screens */
 }
 
 .home-container button {
@@ -200,6 +218,8 @@ nav button:hover {
   animation: fadeInUp 0.8s ease 0.4s backwards;
   position: relative;
   overflow: hidden;
+  display: inline-block; /* Ensure button doesn't stretch */
+  margin: 0 auto; /* Center the button */
 }
 
 .home-container button::before {
@@ -218,6 +238,10 @@ nav button:hover {
   gap: 30px;
   margin-top: 60px;
   animation: fadeInUp 0.8s ease 0.6s backwards;
+  width: 100%;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .feature-card {
@@ -228,6 +252,7 @@ nav button:hover {
   border-radius: 20px;
   color: white;
   transition: var(--transition);
+  text-align: center; /* Ensure card content is centered */
 }
 
 .feature-card:hover {
@@ -240,14 +265,55 @@ nav button:hover {
   font-size: 24px;
   margin-bottom: 12px;
   font-weight: 700;
+  text-align: center;
 }
 
 .feature-card p {
   font-size: 15px;
   opacity: 0.9;
   margin: 0;
+  line-height: 1.6;
+  text-align: center;
+  padding: 0; /* Remove extra padding */
 }
 
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 768px) {
+  .home-container h1 {
+    font-size: 3rem;
+  }
+
+  .home-container p {
+    font-size: 1.2rem;
+    padding: 0 15px;
+  }
+
+  .features {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 0 20px;
+  }
+
+  .feature-card {
+    padding: 25px;
+  }
+}
+
+@media (max-width: 480px) {
+  .home-container h1 {
+    font-size: 2.5rem;
+    letter-spacing: -1px;
+  }
+
+  .home-container p {
+    font-size: 1.1rem;
+  }
+
+  .home-container button {
+    padding: 15px 35px;
+    font-size: 16px;
+  }
+}
 /* ==================== GLASSMORPHISM LOGIN/REGISTER ==================== */
 .login-container {
   max-width: 480px;
