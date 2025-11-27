@@ -2,38 +2,63 @@ import React, { useState } from 'react';
 import api from '../services/api';
 import { useNavigate } from 'react-router-dom';
 
-export default function VerifyOtp(){
+export default function VerifyOtp() {
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const email = localStorage.getItem('registerEmail');
   const tempToken = localStorage.getItem('tempToken');
 
-  async function handleVerify(e){
+  async function handleVerify(e) {
     e.preventDefault();
     setLoading(true);
     try {
       const res = await api.post('/auth/register/verify', { email, otp, tempToken });
-      // on success, store JWT
       localStorage.setItem('token', res.data.token);
-      alert('Registered and logged in!');
+      alert('Registered and logged in successfully!');
       navigate('/dashboard');
     } catch (err) {
       alert(err.response?.data?.message || 'OTP verification failed');
-    } finally { setLoading(false) }
+    } finally { 
+      setLoading(false);
+    }
   }
 
-  if (!email || !tempToken) return <div style={{padding:20}}>No pending registration data. Please start registration first.</div>;
+  if (!email || !tempToken) {
+    return (
+      <div className="verify-container">
+        <h2>⚠️ No Registration Data</h2>
+        <p>Please start the registration process first.</p>
+        <button onClick={() => navigate('/register')}>
+          Go to Register
+        </button>
+      </div>
+    );
+  }
 
   return (
-    <div style={{ padding: 20 }}>
-      <h2>Verify OTP</h2>
-      <p>OTP sent to: <strong>{email}</strong></p>
+    <div className="verify-container">
+      <h2>Verify Your Email</h2>
+      <p>
+        We've sent a 6-digit OTP to<br/>
+        <strong>{email}</strong>
+      </p>
+      
       <form onSubmit={handleVerify}>
         <div>
-          <input value={otp} onChange={e=>setOtp(e.target.value)} placeholder="Enter 6-digit OTP" required />
+          <input 
+            type="text"
+            value={otp} 
+            onChange={e => setOtp(e.target.value)} 
+            placeholder="000000" 
+            maxLength="6"
+            required 
+          />
         </div>
-        <button type="submit" disabled={loading}>{loading ? 'Verifying...' : 'Verify & Create Account'}</button>
+        
+        <button type="submit" disabled={loading}>
+          {loading ? 'Verifying...' : 'Verify & Create Account'}
+        </button>
       </form>
     </div>
   );

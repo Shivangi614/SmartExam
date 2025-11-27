@@ -1,14 +1,18 @@
-// src/components/JoinClass.jsx
 import React, { useState } from "react";
 import axios from "axios";
 
-export default function JoinClass({ user, classes }) {
+export default function JoinClass({ user, classes, refresh }) {
   const [selectedClass, setSelectedClass] = useState("");
+  const [loading, setLoading] = useState(false);
 
   async function joinClass() {
-    if (!selectedClass) return alert("Select a class");
+    if (!selectedClass) {
+      alert("Please select a class");
+      return;
+    }
 
     try {
+      setLoading(true);
       const token = localStorage.getItem("token");
 
       await axios.post(
@@ -17,32 +21,41 @@ export default function JoinClass({ user, classes }) {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      alert("Joined successfully!");
+      alert("Joined class successfully!");
+      refresh();
     } catch (err) {
-      alert("Failed to join class");
+      alert(err.response?.data?.message || "Failed to join class");
     }
+    setLoading(false);
   }
 
   return (
-    <div>
-      <h2>Select Your Class</h2>
+    <div className="join-class-section">
+      <h2>Join a Class</h2>
 
-      <select
-        value={selectedClass}
-        onChange={(e) => setSelectedClass(e.target.value)}
-      >
-        <option value="">-- Select Class --</option>
-        {classes.map((c) => (
-          <option key={c._id} value={c._id}>
-            {c.className} ({c.subjectCode})
-          </option>
-        ))}
-      </select>
+      {classes.length === 0 ? (
+        <div className="empty-state">
+          <p>No classes available at the moment. Please check back later.</p>
+        </div>
+      ) : (
+        <>
+          <select
+            value={selectedClass}
+            onChange={(e) => setSelectedClass(e.target.value)}
+          >
+            <option value="">-- Select a Class --</option>
+            {classes.map((c) => (
+              <option key={c._id} value={c._id}>
+                {c.className} ({c.subjectCode})
+              </option>
+            ))}
+          </select>
 
-      <br />
-      <button onClick={joinClass} style={{ marginTop: "10px" }}>
-        Join
-      </button>
+          <button onClick={joinClass} disabled={loading}>
+            {loading ? "Joining..." : "Join Class"}
+          </button>
+        </>
+      )}
     </div>
   );
 }

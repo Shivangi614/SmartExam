@@ -8,3 +8,21 @@ export function setAuthToken(token){
   else delete api.defaults.headers.common['Authorization'];
 }
 export default api;
+// import axios from 'axios';
+
+// const api = axios.create({
+//   baseURL: '/api', // Change from http://localhost:5000/api to /api
+//   headers: {
+//     'Content-Type': 'application/json'
+//   }
+// });
+
+// export const setAuthToken = (token) => {
+//   if (token) {
+//     api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+//   } else {
+//     delete api.defaults.headers.common['Authorization'];
+//   }
+// };
+
+// export default api;
