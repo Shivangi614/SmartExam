@@ -50,11 +50,7 @@ export default function Dashboard() {
         });
       }
 
-<<<<<<< HEAD
       setClasses(res.data.classes);
-=======
-      setClasses(res.data.classes || []);
->>>>>>> d63e9c2 ( Teacher side Updated)
       setLoading(false);
     } catch (err) {
       console.error(err);
@@ -62,7 +58,6 @@ export default function Dashboard() {
     }
   }
 
-<<<<<<< HEAD
   function logout() {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
@@ -78,7 +73,6 @@ export default function Dashboard() {
     );
   }
 
-=======
   if (loading) {
     return (
       <div className="loading-container">
@@ -88,7 +82,6 @@ export default function Dashboard() {
     );
   }
 
->>>>>>> d63e9c2 ( Teacher side Updated)
   if (!user) return null;
 
   return (
@@ -99,20 +92,18 @@ export default function Dashboard() {
           <h1>Welcome back, {user.name}! 👋</h1>
           <p>Role: {user.role.toUpperCase()} • {user.email}</p>
         </div>
-<<<<<<< HEAD
         <div className="dashboard-actions">
           <button onClick={logout} className="btn-secondary">
             Logout
           </button>
         </div>
-=======
->>>>>>> d63e9c2 ( Teacher side Updated)
+
       </div>
 
       {/* TEACHER DASHBOARD */}
       {user.role === "teacher" && (
         <>
-<<<<<<< HEAD
+
           <button onClick={() => setOpenModal(true)}>
             + Create New Class
           </button>
@@ -129,13 +120,13 @@ export default function Dashboard() {
               ))}
             </div>
           )}
-=======
+
           <div className="dashboard-actions">
             <button onClick={() => setOpenModal(true)}>
               + Create New Class
             </button>
           </div>
->>>>>>> d63e9c2 ( Teacher side Updated)
+
 
           {classes.length === 0 ? (
             <div className="empty-state">
@@ -145,8 +136,8 @@ export default function Dashboard() {
           ) : (
             <div className="classes-grid">
               {classes.map((c) => (
-                <ClassCard 
-                  key={c._id || c.classKey} 
+                <ClassCard
+                  key={c._id || c.classKey}
                   cls={c}
                   teacherView={true}
                   onDelete={fetchClasses}
@@ -167,9 +158,6 @@ export default function Dashboard() {
 
       {/* STUDENT DASHBOARD */}
       {user.role === "student" && (
-<<<<<<< HEAD
-        <JoinClass user={user} classes={classes} refresh={fetchClasses} />
-=======
         <>
           <JoinClass user={user} classes={classes} refresh={fetchClasses} />
           
@@ -185,7 +173,6 @@ export default function Dashboard() {
             </div>
           )}
         </>
->>>>>>> d63e9c2 ( Teacher side Updated)
       )}
     </div>
   );
