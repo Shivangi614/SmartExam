@@ -131,6 +131,53 @@ nav button:hover {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+<<<<<<< HEAD
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 60px 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Background with Shapes */
+/* ==================== HERO/HOME PAGE ==================== */
+.home-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 60px 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Background with Shapes */
+.home-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  z-index: -1;
+}
+
+.home-content {
+  position: relative;
+  z-index: 2;
+  max-width: 900px;
+  margin: 0 auto; /* Center the content */
+}
+
+.home-container h1 {
+  font-size: 4.5rem;
+  margin-bottom: 1.5rem;
+  font-weight: 900;
+=======
   justify-content: center;
   align-items: center;
   text-align: center;
@@ -184,6 +231,520 @@ nav button:hover {
   text-align: center; /* Ensure heading is centered */
 }
 
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.home-container p {
+  font-size: 1.4rem;
+  margin: 0 auto 2.5rem; /* Center align with auto margins */
+  color: rgba(255, 255, 255, 0.95);
+  max-width: 700px;
+  line-height: 1.8;
+  font-weight: 400;
+  animation: fadeInUp 0.8s ease 0.2s backwards;
+  text-align: center; /* Ensure paragraph is centered */
+  padding: 0 20px; /* Add padding for smaller screens */
+}
+
+.home-container button {
+  background: white;
+  color: var(--primary);
+  padding: 18px 40px;
+  font-size: 18px;
+  font-weight: 700;
+  border-radius: 50px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  animation: fadeInUp 0.8s ease 0.4s backwards;
+  position: relative;
+  overflow: hidden;
+  display: inline-block; /* Ensure button doesn't stretch */
+  margin: 0 auto; /* Center the button */
+}
+
+.home-container button::before {
+  background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.3), transparent);
+}
+
+.home-container button:hover {
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.4);
+}
+
+/* Feature Cards on Home */
+.features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  margin-top: 60px;
+  animation: fadeInUp 0.8s ease 0.6s backwards;
+  width: 100%;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.feature-card {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 30px;
+  border-radius: 20px;
+  color: white;
+  transition: var(--transition);
+  text-align: center; /* Ensure card content is centered */
+}
+
+.feature-card:hover {
+  transform: translateY(-10px);
+  background: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.feature-card h3 {
+  font-size: 24px;
+  margin-bottom: 12px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.feature-card p {
+  font-size: 15px;
+  opacity: 0.9;
+  margin: 0;
+  line-height: 1.6;
+  text-align: center;
+  padding: 0; /* Remove extra padding */
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 768px) {
+  .home-container h1 {
+    font-size: 3rem;
+  }
+
+  .home-container p {
+    font-size: 1.2rem;
+    padding: 0 15px;
+  }
+
+  .features {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 0 20px;
+  }
+
+  .feature-card {
+    padding: 25px;
+  }
+}
+
+@media (max-width: 480px) {
+  .home-container h1 {
+    font-size: 2.5rem;
+    letter-spacing: -1px;
+  }
+
+  .home-container p {
+    font-size: 1.1rem;
+  }
+
+  .home-container button {
+    padding: 15px 35px;
+    font-size: 16px;
+  }
+}
+/* ==================== GLASSMORPHISM LOGIN/REGISTER ==================== */
+.login-container {
+  max-width: 480px;
+  margin: 80px auto;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  padding: 50px;
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  position: relative;
+  overflow: hidden;
+}
+
+.login-container::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(135deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+  transform: rotate(45deg);
+  pointer-events: none;
+}
+
+.login-container h2 {
+  text-align: center;
+  margin-bottom: 35px;
+  font-size: 32px;
+  font-weight: 800;
+  background: var(--gradient-purple);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.login-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  position: relative;
+  z-index: 1;
+}
+
+.login-container form > div {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.login-container label {
+  font-weight: 600;
+  color: var(--dark);
+  font-size: 14px;
+  letter-spacing: 0.3px;
+}
+
+.login-container input,
+.login-container select {
+  padding: 14px 18px;
+  font-size: 15px;
+  border-radius: 12px;
+  border: 2px solid var(--border);
+  transition: var(--transition);
+}
+
+.login-container input:focus,
+.login-container select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+}
+
+.login-container button[type="submit"] {
+  margin-top: 16px;
+  padding: 16px;
+  font-size: 17px;
+  font-weight: 700;
+  background: var(--gradient-purple);
+  border-radius: 12px;
+}
+
+.login-container p {
+  text-align: center;
+  margin-top: 24px;
+  color: var(--text-light);
+  font-size: 15px;
+}
+
+.login-container p a {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+/* ==================== VERIFY OTP ==================== */
+.verify-container {
+  max-width: 480px;
+  margin: 80px auto;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  padding: 50px;
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.verify-container h2 {
+  background: var(--gradient-purple);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 20px;
+  font-size: 32px;
+  font-weight: 800;
+}
+
+.verify-container p {
+  color: var(--text);
+  margin-bottom: 35px;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.verify-container p strong {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.verify-container input {
+  text-align: center;
+  font-size: 24px;
+  letter-spacing: 12px;
+  font-weight: 700;
+  padding: 18px;
+}
+
+/* ==================== DASHBOARD ==================== */
+.dashboard-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 50px 30px;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 50px;
+  padding: 35px;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+  border-radius: 20px;
+  border: 2px solid rgba(102, 126, 234, 0.2);
+}
+
+.dashboard-header h1 {
+  font-size: 38px;
+  font-weight: 800;
+  background: var(--gradient-purple);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.dashboard-header p {
+  color: var(--text-light);
+  font-size: 17px;
+  margin-top: 8px;
+  font-weight: 500;
+}
+
+.dashboard-actions {
+  display: flex;
+  gap: 16px;
+}
+
+/* ==================== CLASS CARDS WITH HOVER EFFECTS ==================== */
+/* ==================== CLASS CARD ENHANCED STYLES ==================== */
+.class-card {
+  background: white;
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: var(--shadow-md);
+  transition: var(--transition);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  border: 2px solid transparent;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Top colored border accent */
+.class-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: var(--gradient-purple);
+}
+
+.class-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: var(--shadow-xl);
+  border-color: var(--primary);
+}
+
+/* Class Card Header */
+.class-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+  gap: 12px;
+}
+
+/* ==================== DASHBOARD GRID - HORIZONTAL CARDS ==================== */
+.classes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 24px;
+  margin-top: 30px;
+}
+
+/* For exactly 3 cards per row on larger screens */
+@media (min-width: 1200px) {
+  .classes-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* For 2 cards per row on medium screens */
+@media (min-width: 768px) and (max-width: 1199px) {
+  .classes-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* For 1 card per row on small screens */
+@media (max-width: 767px) {
+  .classes-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Dashboard Actions */
+.dashboard-actions {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 30px;
+}
+
+.dashboard-actions button {
+  padding: 14px 28px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* Class Manage Section */
+.class-manage-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 24px;
+  margin: 40px 0;
+}
+
+.manage-card {
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: var(--shadow-md);
+  text-align: center;
+  transition: var(--transition);
+  border: 2px solid transparent;
+}
+
+.manage-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary);
+}
+
+.manage-card h3 {
+  font-size: 22px;
+  margin-bottom: 12px;
+  color: var(--dark);
+}
+
+.manage-card p {
+  color: var(--text-light);
+  margin-bottom: 20px;
+  font-size: 15px;
+}
+
+.manage-card button {
+  width: 100%;
+  padding: 12px;
+}
+
+.class-card h3 {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0;
+  background: var(--gradient-purple);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.3;
+  flex: 1;
+}
+
+/* Badge for Subject Code */
+.badge {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.15));
+  color: var(--primary);
+  border: 2px solid var(--primary);
+  white-space: nowrap;
+}
+
+/* Class Key */
+.class-key {
+  color: var(--text-light);
+  font-size: 14px;
+  margin: 12px 0;
+  padding: 10px 14px;
+  background: var(--bg);
+  border-radius: 8px;
+  border-left: 3px solid var(--primary);
+  font-family: 'Courier New', monospace;
+}
+
+.class-key .label {
+  font-weight: 600;
+  color: var(--text);
+  margin-right: 6px;
+}
+
+/* Card Actions */
+.card-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.card-actions button {
+  flex: 1;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 10px;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.card-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Button Styles */
+.btn-primary {
+  background: var(--gradient-purple);
+>>>>>>> d63e9c2 ( Teacher side Updated)
+  color: white;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  letter-spacing: -2px;
+  line-height: 1.1;
+  animation: fadeInUp 0.8s ease;
+  text-align: center; /* Ensure heading is centered */
+}
+
+<<<<<<< HEAD
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -549,6 +1110,284 @@ nav button:hover {
   background: var(--gradient-purple);
 }
 
+/* ==================== MODAL WITH GLASSMORPHISM ==================== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(20px);
+  padding: 40px;
+  border-radius: 24px;
+  box-shadow: var(--shadow-xl);
+  min-width: 450px;
+  animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(50px) scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.modal-content h2 {
+  background: var(--gradient-purple);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 30px;
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.modal-content input {
+  margin-bottom: 20px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 30px;
+}
+
+.modal-actions button {
+  flex: 1;
+  padding: 14px;
+}
+
+/* ==================== JOIN CLASS SECTION ==================== */
+.join-class-section {
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: var(--shadow-lg);
+  max-width: 700px;
+  margin: 0 auto;
+  border: 2px solid rgba(102, 126, 234, 0.1);
+}
+
+.join-class-section h2 {
+  background: var(--gradient-purple);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 30px;
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.join-class-section select {
+  margin-bottom: 24px;
+  padding: 16px;
+  font-size: 16px;
+}
+
+.join-class-section button {
+  width: 100%;
+  padding: 16px;
+  font-size: 17px;
+}
+
+/* ==================== LOADING ==================== */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 70vh;
+  gap: 24px;
+}
+
+.loading-container p {
+  color: var(--text);
+  font-size: 18px;
+  font-weight: 600;
+  animation: pulse 1.5s ease infinite;
+}
+
+/* ==================== EMPTY STATE ==================== */
+.empty-state {
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.empty-state h3 {
+  font-size: 28px;
+  margin-bottom: 16px;
+  font-weight: 700;
+  color: var(--dark);
+}
+
+.empty-state p {
+  font-size: 17px;
+  color: var(--text-light);
+  margin-bottom: 30px;
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 768px) {
+  nav {
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px;
+  }
+
+  .home-container h1 {
+    font-size: 3rem;
+  }
+
+  .features {
+    grid-template-columns: 1fr;
+  }
+
+  .login-container {
+    margin: 40px 20px;
+    padding: 35px 28px;
+  }
+
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+  }
+
+  .classes-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-content {
+    min-width: 90%;
+    margin: 20px;
+=======
+.btn-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #5568d3, #6842a0);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+.btn-success:hover:not(:disabled) {
+  background: linear-gradient(135deg, #059669, #047857);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+}
+
+.btn-secondary {
+  background: var(--gradient-dark);
+  color: white;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #1e293b, #334155);
+}
+
+/* Single button full width */
+.card-actions button:only-child {
+  flex: 1;
+}
+
+/* Responsive Card Actions */
+@media (max-width: 480px) {
+  .card-actions {
+    flex-direction: column;
+  }
+
+  .card-actions button {
+    width: 100%;
+>>>>>>> d63e9c2 ( Teacher side Updated)
+  }
+}
+
+/* Empty State for No Classes */
+.empty-state {
+  text-align: center;
+  padding: 80px 20px;
+  color: var(--text-light);
+}
+
+.empty-state h3 {
+  font-size: 28px;
+  margin-bottom: 16px;
+  font-weight: 700;
+  background: var(--gradient-purple);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.empty-state p {
+  font-size: 17px;
+  color: var(--text-light);
+  margin-bottom: 30px;
+}
+
+/* Loading State */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 70vh;
+  gap: 24px;
+}
+
+.loading-container p {
+  color: var(--text);
+  font-size: 18px;
+  font-weight: 600;
+  animation: pulse 1.5s ease infinite;
+}
+
+/* Spinner */
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid var(--border);
+  border-top: 4px solid var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 2rem auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
 /* ==================== MODAL WITH GLASSMORPHISM ==================== */
 .modal-overlay {
   position: fixed;
