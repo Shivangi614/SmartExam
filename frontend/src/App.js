@@ -4,78 +4,22 @@ import Register from './pages/Register';
 import VerifyOtp from './pages/VerifyOtp';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
-<<<<<<< HEAD
-=======
-import ClassManage from './pages/ManageClass';
->>>>>>> d63e9c2 ( Teacher side Updated)
+// import ManageClass from './pages/ManageClass';
 import ProtectedRoute from './components/ProtectedRoute';
 import './App.css';
+import ManageClass from './pages/ManageClass';
 
-function App() {
-  const token = localStorage.getItem('token');
-  
+function App(){
   return (
     <BrowserRouter>
-<<<<<<< HEAD
-      {/* Animated Background */}
-      <div className="animated-bg">
-        <div className="shape shape-1"></div>
-        <div className="shape shape-2"></div>
-        <div className="shape shape-3"></div>
-      </div>
-
-      {/* Navigation */}
-      <nav>
-        <div>SmartExam</div>
-        <div>
-          {!token ? (
-            <>
-              <Link to="/">Home</Link>
-              <Link to="/register">Register</Link>
-              <Link to="/login">Login</Link>
-            </>
-          ) : (
-            <>
-              <Link to="/dashboard">Dashboard</Link>
-              <button onClick={() => {
-                localStorage.removeItem('token');
-                window.location.href = '/login';
-              }}>
-                Logout
-              </button>
-            </>
-          )}
-        </div>
-      </nav>
-
-      {/* Routes */}
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/verify-otp" element={<VerifyOtp />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/dashboard" element={
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
-        } />
-      </Routes>
-=======
-      <AppContent />
->>>>>>> d63e9c2 ( Teacher side Updated)
+    <AppContent />
     </BrowserRouter>
-  );
+  )
 }
-
-<<<<<<< HEAD
-=======
 function AppContent() {
   const location = useLocation();
   const token = localStorage.getItem('token');
-  
-  // Check if user is on authentication pages (home, login, register)
-  const isAuthPage = ['/', '/login', '/register', '/verify-otp'].includes(location.pathname);
-
+  const isAuthPage = ['/','/login','/register','/verify-otp'].includes(location.pathname);
   return (
     <>
       {/* Animated Background */}
@@ -85,9 +29,9 @@ function AppContent() {
         <div className="shape shape-3"></div>
       </div>
 
-      {/* Navigation - Changes based on page */}
+      {/* Navigation */}
       <nav>
-        <div>SmartExam</div>
+        <div>SmartAssign</div>
         <div>
           {isAuthPage && !token ? (
             <>
@@ -121,28 +65,21 @@ function AppContent() {
             <Dashboard />
           </ProtectedRoute>
         } />
-        <Route path="/manage-class/:classKey" element={
-          <ProtectedRoute>
-            <ClassManage />
+        <Route path='/manage-class/:classKey' element={
+          <ProtectedRoute><ManageClass />
           </ProtectedRoute>
-        } />
-        <Route path="/student/class/:classKey" element={
-          <ProtectedRoute>
-            <ClassManage />
-          </ProtectedRoute>
-        } />
+        }/>
       </Routes>
     </>
   );
 }
 
->>>>>>> d63e9c2 ( Teacher side Updated)
 // Home Page Component
 function HomePage() {
   return (
     <div className="home-container">
       <div className="home-content">
-        <h1>Welcome to SmartExam</h1>
+        <h1>Welcome to SmartAssign</h1>
         <p>
           A modern, intelligent examination management system designed for educational excellence. 
           Create, manage, and conduct exams seamlessly with our advanced platform.

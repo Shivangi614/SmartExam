@@ -1,0 +1,241 @@
+/* StudentList.css - Matches App.css Design System */
+
+.student-list-container {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(102, 126, 234, 0.1);
+}
+
+.student-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 28px;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.03));
+  border-bottom: 2px solid rgba(102, 126, 234, 0.12);
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.student-list-title {
+  margin: 0;
+  font-size: 18px;
+  color: #2c2c54;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.btn-delete-all {
+  background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+  color: white;
+  border: none;
+  padding: 11px 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  box-shadow: 0 4px 16px rgba(255, 152, 0, 0.25);
+  letter-spacing: 0.3px;
+}
+
+.btn-delete-all:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(255, 152, 0, 0.35);
+}
+
+.btn-delete-all:active {
+  transform: translateY(-1px);
+}
+
+.no-students-message {
+  padding: 60px 28px;
+  text-align: center;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.03), rgba(118, 75, 162, 0.02));
+}
+
+.no-students-message p {
+  margin: 0;
+  color: #999;
+  font-size: 15px;
+  letter-spacing: 0.2px;
+}
+
+.student-list-wrapper {
+  overflow-x: auto;
+  max-height: 600px;
+  overflow-y: auto;
+  background: white;
+}
+
+.student-list-wrapper::-webkit-scrollbar {
+  width: 6px;
+}
+
+.student-list-wrapper::-webkit-scrollbar-track {
+  background: rgba(102, 126, 234, 0.05);
+}
+
+.student-list-wrapper::-webkit-scrollbar-thumb {
+  background: #667eea;
+  border-radius: 4px;
+}
+
+.student-list-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #764ba2;
+}
+
+.student-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.student-data-table thead {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  color: white;
+}
+
+.student-data-table th {
+  padding: 16px 18px;
+  text-align: left;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
+
+.student-data-table td {
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(102, 126, 234, 0.08);
+  color: #555;
+}
+
+.student-row {
+  background: white;
+  transition: all 0.2s ease;
+}
+
+.student-row:hover {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.04), rgba(118, 75, 162, 0.03));
+  box-shadow: inset 0 0 0 1px rgba(102, 126, 234, 0.1);
+}
+
+.student-row:last-child td {
+  border-bottom: none;
+}
+
+.roll-col {
+  font-weight: 700;
+  color: #2c2c54;
+  min-width: 110px;
+  letter-spacing: 0.3px;
+}
+
+.name-col {
+  min-width: 140px;
+  font-weight: 500;
+}
+
+.status-col {
+  min-width: 110px;
+}
+
+.date-col {
+  font-size: 13px;
+  color: #888;
+  min-width: 160px;
+}
+
+.result-col {
+  font-weight: 700;
+  color: #667eea;
+  min-width: 80px;
+  text-align: center;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: capitalize;
+  letter-spacing: 0.2px;
+  border: 1px solid;
+}
+
+.status-badge.pending {
+  background: linear-gradient(135deg, rgba(255, 193, 7, 0.15), rgba(251, 140, 0, 0.1));
+  color: #f57f17;
+  border-color: rgba(255, 193, 7, 0.3);
+}
+
+.status-badge.active {
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.15), rgba(56, 142, 60, 0.1));
+  color: #2e7d32;
+  border-color: rgba(76, 175, 80, 0.3);
+}
+
+.status-badge.inactive {
+  background: linear-gradient(135deg, rgba(244, 67, 54, 0.15), rgba(211, 47, 47, 0.1));
+  color: #c62828;
+  border-color: rgba(244, 67, 54, 0.3);
+}
+
+.status-badge.completed {
+  background: linear-gradient(135deg, rgba(33, 150, 243, 0.15), rgba(25, 103, 210, 0.1));
+  color: #1565c0;
+  border-color: rgba(33, 150, 243, 0.3);
+}
+
+@media (max-width: 768px) {
+  .student-list-container {
+    border-radius: 16px;
+  }
+
+  .student-list-header {
+    padding: 18px 20px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .btn-delete-all {
+    width: 100%;
+    display: block;
+  }
+
+  .student-list-wrapper {
+    max-height: 450px;
+  }
+
+  .student-data-table {
+    font-size: 13px;
+  }
+
+  .student-data-table th,
+  .student-data-table td {
+    padding: 11px 14px;
+  }
+
+  .roll-col,
+  .name-col,
+  .status-col,
+  .date-col,
+  .result-col {
+    min-width: auto;
+  }
+
+  .date-col {
+    font-size: 12px;
+  }
+
+  .student-list-title {
+    font-size: 16px;
+  }
+}

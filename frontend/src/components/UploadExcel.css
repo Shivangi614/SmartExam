@@ -1,0 +1,246 @@
+/* UploadExcel.css - Matches App.css Design System */
+
+.upload-excel-container {
+  background: white;
+  border-radius: 20px;
+  padding: 35px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  margin-bottom: 30px;
+  border: 1px solid rgba(102, 126, 234, 0.1);
+}
+
+.upload-form {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.file-input-wrapper {
+  flex: 1;
+  min-width: 280px;
+  position: relative;
+}
+
+.file-input {
+  display: none;
+}
+
+.file-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px 24px;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+  border: 2px dashed #667eea;
+  border-radius: 16px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 700;
+  color: #667eea;
+  transition: all 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+  letter-spacing: 0.3px;
+}
+
+.file-label:hover {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.12), rgba(118, 75, 162, 0.12));
+  border-color: #764ba2;
+  color: #764ba2;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.15);
+}
+
+.file-input:focus + .file-label {
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+}
+
+.upload-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 18px 32px;
+  border-radius: 16px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 700;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  height: fit-content;
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+  letter-spacing: 0.3px;
+}
+
+.upload-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+}
+
+.upload-btn:active {
+  transform: translateY(-1px);
+}
+
+.upload-message {
+  margin-top: 16px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: slideDown 0.3s ease;
+  border-left: 4px solid;
+  letter-spacing: 0.2px;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.upload-message.success {
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(56, 142, 60, 0.05));
+  color: #2e7d32;
+  border-left-color: #4caf50;
+}
+
+.upload-message.error {
+  background: linear-gradient(135deg, rgba(244, 67, 54, 0.1), rgba(211, 47, 47, 0.05));
+  color: #c62828;
+  border-left-color: #f44336;
+}
+
+.uploaded-section {
+  margin-top: 24px;
+  padding: 24px;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.03));
+  border: 2px solid rgba(102, 126, 234, 0.15);
+  border-radius: 16px;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.uploaded-title {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  color: #2c2c54;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.uploaded-table-wrapper {
+  overflow-x: auto;
+  border-radius: 12px;
+}
+
+.uploaded-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.uploaded-table thead {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.uploaded-table th {
+  padding: 14px 16px;
+  text-align: left;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  font-size: 13px;
+}
+
+.uploaded-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+  color: #555;
+}
+
+.uploaded-table tbody tr {
+  background: white;
+  transition: all 0.2s ease;
+}
+
+.uploaded-table tbody tr:hover {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.03), rgba(118, 75, 162, 0.02));
+  box-shadow: inset 0 0 0 1px rgba(102, 126, 234, 0.1);
+}
+
+.uploaded-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  background: linear-gradient(135deg, rgba(255, 193, 7, 0.15), rgba(251, 140, 0, 0.1));
+  color: #f57f17;
+  border: 1px solid rgba(255, 193, 7, 0.3);
+  text-transform: capitalize;
+  letter-spacing: 0.2px;
+}
+
+@media (max-width: 768px) {
+  .upload-excel-container {
+    padding: 24px;
+  }
+
+  .upload-form {
+    gap: 12px;
+  }
+
+  .file-input-wrapper {
+    min-width: 100%;
+  }
+
+  .file-label {
+    padding: 14px 18px;
+    font-size: 14px;
+  }
+
+  .upload-btn {
+    width: 100%;
+    padding: 14px 20px;
+  }
+
+  .uploaded-section {
+    margin-top: 16px;
+    padding: 16px;
+  }
+
+  .uploaded-table {
+    font-size: 12px;
+  }
+
+  .uploaded-table th,
+  .uploaded-table td {
+    padding: 10px 12px;
+  }
+
+  .uploaded-title {
+    font-size: 15px;
+  }
+}

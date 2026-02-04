@@ -20,6 +20,7 @@ export default function Dashboard() {
     if (user) fetchClasses();
   }, [user]);
 
+  // 🔹 Fetch logged-in user
   async function fetchUser() {
     try {
       const token = localStorage.getItem("token");
@@ -35,28 +36,33 @@ export default function Dashboard() {
     }
   }
 
-  async function fetchClasses() {
-    try {
-      const token = localStorage.getItem("token");
-      let res;
+  // 🔹 Fetch teacher/student classes
+async function fetchClasses() {
+  try {
+    const token = localStorage.getItem("token");
+    let res;
 
-      if (user.role === "teacher") {
-        res = await axios.get("http://localhost:5000/api/class/mine", {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-      } else {
-        res = await axios.get("http://localhost:5000/api/class/my", {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-      }
+    if (user.role === "teacher") {
+      res = await axios.get("http://localhost:5000/api/class/mine", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
 
-      setClasses(res.data.classes);
-      setLoading(false);
-    } catch (err) {
-      console.error(err);
-      setLoading(false);
+      setClasses(res.data.classes || []);  // ✅ FIXED
+    } else {
+      res = await axios.get("http://localhost:5000/api/class/classes", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      setClasses(res.data.classes|| []);  // ✅ FIXED
     }
+
+    setLoading(false);
+  } catch (err) {
+    console.error(err);
+    setClasses([]);  // prevents crash
+    setLoading(false);
   }
+}
 
   function logout() {
     localStorage.removeItem("token");
@@ -73,61 +79,31 @@ export default function Dashboard() {
     );
   }
 
-  if (loading) {
-    return (
-      <div className="loading-container">
-        <div className="spinner"></div>
-        <p>Loading your dashboard...</p>
-      </div>
-    );
-  }
-
   if (!user) return null;
 
   return (
     <div className="dashboard-container">
+      
       {/* Header */}
       <div className="dashboard-header">
         <div>
           <h1>Welcome back, {user.name}! 👋</h1>
           <p>Role: {user.role.toUpperCase()} • {user.email}</p>
         </div>
-        <div className="dashboard-actions">
-          <button onClick={logout} className="btn-secondary">
-            Logout
-          </button>
-        </div>
-
+        <button onClick={logout} className="btn-secondary">Logout</button>
       </div>
 
-      {/* TEACHER DASHBOARD */}
+
+      {/* ================================
+          TEACHER DASHBOARD
+      ================================= */}
       {user.role === "teacher" && (
         <>
-
-          <button onClick={() => setOpenModal(true)}>
+          <button onClick={() => setOpenModal(true)} className="btn-primary">
             + Create New Class
           </button>
 
-          {classes.length === 0 ? (
-            <div className="empty-state">
-              <h3>No Classes Yet</h3>
-              <p>Create your first class to get started!</p>
-            </div>
-          ) : (
-            <div className="classes-grid">
-              {classes.map((c) => (
-                <ClassCard key={c._id} classData={c} userRole="teacher" />
-              ))}
-            </div>
-          )}
-
-          <div className="dashboard-actions">
-            <button onClick={() => setOpenModal(true)}>
-              + Create New Class
-            </button>
-          </div>
-
-
+          {/* Display classes */}
           {classes.length === 0 ? (
             <div className="empty-state">
               <h3>No Classes Yet</h3>
@@ -146,6 +122,7 @@ export default function Dashboard() {
             </div>
           )}
 
+          {/* Create Class Modal */}
           {openModal && (
             <CreateClassModal
               isOpen={openModal}
@@ -156,24 +133,31 @@ export default function Dashboard() {
         </>
       )}
 
-      {/* STUDENT DASHBOARD */}
-      {user.role === "student" && (
-        <>
-          <JoinClass user={user} classes={classes} refresh={fetchClasses} />
-          
-          {classes.length > 0 && (
-            <div className="classes-grid">
-              {classes.map((c) => (
-                <ClassCard 
-                  key={c._id || c.classKey} 
-                  cls={c}
-                  teacherView={false}
-                />
-              ))}
-            </div>
-          )}
-        </>
-      )}
+
+{/* STUDENT DASHBOARD */}
+{user.role === "student" && (
+  <>
+    {/* Join Class Section */}
+    <JoinClass user={user} classes={classes} refresh={fetchClasses} />
+
+    <h2>My Classes</h2>
+
+    {classes.length === 0 && <p>No classes joined yet.</p>}
+
+    {classes.length > 0 && (
+      <div className="classes-grid">
+        {classes.map((c) => (
+          <ClassCard
+            key={c.classKey}
+            cls={c}
+            teacherView={false}
+          />
+        ))}
+      </div>
+    )}
+  </>
+)}
+
     </div>
   );
 }

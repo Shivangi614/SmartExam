@@ -2,6 +2,7 @@
 // src/components/UploadExcel.js
 import React, { useState } from 'react';
 import api from '../services/api';
+import './UploadExcel.css';
 
 export default function UploadExcel({ classKey, onUploaded }) {
   const [file, setFile] = useState(null);
@@ -35,30 +36,52 @@ export default function UploadExcel({ classKey, onUploaded }) {
   }
 
   return (
-    <div style={{ marginTop: 10 }}>
-      <form onSubmit={handleUpload}>
-        <input type="file" accept=".xlsx" onChange={e => setFile(e.target.files[0])} />
-        <button type="submit" style={{ marginLeft: 8 }}>Upload Excel</button>
+    <div className="upload-excel-container">
+      <form onSubmit={handleUpload} className="upload-form">
+        <div className="file-input-wrapper">
+          <input 
+            type="file" 
+            accept=".xlsx" 
+            onChange={e => setFile(e.target.files[0])}
+            id="excel-file-input"
+            className="file-input"
+          />
+          <label htmlFor="excel-file-input" className="file-label">
+            {file ? file.name : '📤 Choose Excel File'}
+          </label>
+        </div>
+        <button type="submit" className="upload-btn">Upload</button>
       </form>
-      <div style={{ marginTop: 8, color: '#333' }}>{msg}</div>
+
+      {msg && (
+        <div className={`upload-message ${msg.includes('Failed') || msg.includes('Select') ? 'error' : 'success'}`}>
+          {msg}
+        </div>
+      )}
 
       {uploaded.length > 0 && (
-        <div style={{ marginTop: 12 }}>
-          <h4>Newly added students</h4>
-          <table border="1" cellPadding="6">
-            <thead>
-              <tr><th>Roll</th><th>Name</th><th>Status</th></tr>
-            </thead>
-            <tbody>
-              {uploaded.map((s, i) => (
-                <tr key={i}>
-                  <td>{s.rollNumber}</td>
-                  <td>{s.name}</td>
-                  <td>{s.status || 'Pending'}</td>
+        <div className="uploaded-section">
+          <h4 className="uploaded-title">✅ Newly Added Students</h4>
+          <div className="uploaded-table-wrapper">
+            <table className="uploaded-table">
+              <thead>
+                <tr>
+                  <th>Roll Number</th>
+                  <th>Name</th>
+                  <th>Status</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {uploaded.map((s, i) => (
+                  <tr key={i}>
+                    <td>{s.rollNumber}</td>
+                    <td>{s.name}</td>
+                    <td><span className="status-badge">{s.status || 'Pending'}</span></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>
