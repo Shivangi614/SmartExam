@@ -31,7 +31,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 
 const authRoutes = require('./routes/auth.js');
-const classRoutes=require('./routes/class.js');
+const classRoutes = require('./routes/class.js');
 
 const app = express();
 
@@ -39,7 +39,7 @@ app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:3000' }));
 app.use(express.json());
 
 app.use('/api/auth', authRoutes);
-app.use('/api/class',classRoutes);
+app.use('/api/class', classRoutes);
 
 const PORT = process.env.PORT || 5000;
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })

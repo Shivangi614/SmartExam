@@ -7,9 +7,18 @@ const { authMiddleware, requireRole } = require('../middleware/authMiddleware.js
 const ClassModel = require('../models/Class.js');
 const upload = multer({ storage: multer.memoryStorage() });
 
-function makeClassKey(className, subjectCode) {
-  return `${(className||'').trim().toLowerCase()}_${(subjectCode||'').trim().toLowerCase()}`;
+async function findClassByKeySafe(classKey) {
+  const normalized = decodeURIComponent(classKey).trim().toLowerCase();
+
+  return ClassModel.findOne({
+    classKey: { $regex: `^${normalized}$`, $options: 'i' }
+  });
 }
+
+function makeClassKey(className, subjectCode) {
+  return `${(className || '').trim().toLowerCase()}_${(subjectCode || '').trim().toLowerCase()}`;
+}
+
 
 /* Create class (teacher) */
 router.post('/create', authMiddleware, requireRole('teacher'), async (req, res) => {
@@ -44,6 +53,8 @@ router.get('/mine', authMiddleware, requireRole('teacher'), async (req, res) => 
     res.status(500).json({ message: 'Server error' });
   }
 });
+
+/* Deleting class card */
 router.delete(
   "/:key",
   authMiddleware,
@@ -81,19 +92,20 @@ router.delete(
 /* Get class details */
 router.get('/:classKey', authMiddleware, async (req, res) => {
   try {
-    const classKey = (req.params.classKey || '').toLowerCase();
-    const cls = await ClassModel.findOne({ classKey }).populate('teacher','name email');
+    const { classKey } = req.params;
+    const cls = await ClassModel.findOne({ classKey }).populate('teacher', 'name email');
     if (!cls) return res.status(404).json({ message: 'Class not found' });
 
+    // if teacher -> return full details
     if (req.user.role === 'teacher' && cls.teacher._id.equals(req.user._id)) {
       return res.json({ class: cls });
     }
 
+    // if student -> check if student joined
     if (req.user.role === 'student') {
-      const userRoll = (req.user.rollNumber || '').toString().trim().toLowerCase();
-      const joined = cls.students.some(s => (s.rollNumber||'').toString().trim().toLowerCase() === userRoll && s.status === 'Joined');
+      const joined = cls.students.some(s => s.email === req.user.email || s.rollNumber === req.user.rollNumber);
       if (!joined) return res.status(403).json({ message: 'You have not joined this class' });
-
+      // return class info without other students
       const safe = {
         teacher: cls.teacher,
         className: cls.className,
@@ -104,65 +116,160 @@ router.get('/:classKey', authMiddleware, async (req, res) => {
       };
       return res.json({ class: safe });
     }
-
     res.status(403).json({ message: 'Forbidden' });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Server error' });
-  }
+  } catch (err) { console.error(err); res.status(500).json({ message: 'Server error' }); }
 });
 
-/* Upload students Excel (.xlsx) */
-router.post('/:classKey/upload-students', authMiddleware, requireRole('teacher'), upload.single('file'), async (req, res) => {
-  try {
-    const classKey = (req.params.classKey || '').toLowerCase();
-    const cls = await ClassModel.findOne({ classKey });
-    if (!cls) return res.status(404).json({ message: 'Class not found' });
-    if (!cls.teacher.equals(req.user._id)) return res.status(403).json({ message: 'Not your class' });
+router.post(
+  '/:classKey/upload-students',
+  authMiddleware,
+  requireRole('teacher'),
+  upload.single('file'),
+  async (req, res) => {
+    try {
+      const cls = await findClassByKeySafe(req.params.classKey);
 
-    if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
+      if (!cls) return res.status(404).json({ message: 'Class not found' });
+      if (!cls.teacher.equals(req.user._id))
+        return res.status(403).json({ message: 'Not your class' });
+      if (!req.file)
+        return res.status(400).json({ message: 'No file uploaded' });
 
-    const workbook = XLSX.read(req.file.buffer, { type: 'buffer' });
-    const sheet = workbook.Sheets[workbook.SheetNames[0]];
-    let records = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+      const workbook = XLSX.read(req.file.buffer, { type: 'buffer' });
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      let records = XLSX.utils.sheet_to_json(sheet, { defval: '' });
 
-    records = records.map(row => {
-      const normalized = {};
-      Object.keys(row).forEach(k => {
-        normalized[k.toString().trim().toLowerCase()] = row[k];
-      });
-      return normalized;
-    });
-
-    const newStudents = [];
-    for (const r of records) {
-      const rollRaw = (r.rollnumber || r.roll || '').toString().trim();
-      const nameRaw = (r.name || '').toString().trim();
-      if (!rollRaw) continue;
-      const rollLower = rollRaw.toLowerCase();
-      const exists = cls.students.some(s => (s.rollNumber||'').toString().trim().toLowerCase() === rollLower);
-      if (!exists) {
-        cls.students.push({
-          name: nameRaw,
-          rollNumber: rollRaw,
-          status: 'Pending',
-          joinedAt: null
+      // normalize headers
+      records = records.map(row => {
+        const normalized = {};
+        Object.keys(row).forEach(k => {
+          normalized[k.trim().toLowerCase()] = row[k];
         });
-        newStudents.push({ name: nameRaw, rollNumber: rollRaw, status: 'Pending' });
-      }
-    }
+        return normalized;
+      });
 
-    await cls.save();
-    return res.json({ message: 'Excel uploaded successfully', added: newStudents.length, newStudents });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Excel upload failed' });
+      const newStudents = [];
+for (const r of records) {
+  const roll = (r.rollnumber || r.roll || '').toString().trim();
+  const name = (r.name || '').toString().trim();
+
+  const emailKey = Object.keys(r).find(k => k.includes('mail'));
+  const email = emailKey ? r[emailKey].toString().trim() : '';
+
+  if (!roll) continue;
+
+  const exists = cls.students.some(
+    s => s.rollNumber?.toLowerCase() === roll.toLowerCase()
+  );
+
+  if (!exists) {
+    cls.students.push({
+      name,
+      rollNumber: roll,
+      email: email || null,
+      status: 'Pending',
+      joinedAt: null
+    });
   }
-});
- /*
+}
+
+      await cls.save();
+
+      res.json({
+        message: 'Excel uploaded successfully',
+        added: newStudents.length,
+        students: newStudents
+      });
+
+    } catch (err) {
+      console.error('UPLOAD ERROR:', err);
+      res.status(500).json({ message: 'Excel upload failed' });
+    }
+  }
+);
+
+/* Delete Single Student */
+router.delete(
+  '/:classKey/student/:rollNumber',
+  authMiddleware,
+  requireRole('teacher'),
+  async (req, res) => {
+    try {
+      const decodedKey = decodeURIComponent(req.params.classKey)
+        .trim()
+        .toLowerCase();
+
+      const rollNumber = req.params.rollNumber.trim().toLowerCase();
+
+      const cls = await ClassModel.findOne({
+        classKey: { $regex: `^${decodedKey}$`, $options: 'i' }
+      });
+
+      if (!cls) {
+        return res.status(404).json({ message: 'Class not found' });
+      }
+
+      if (!cls.teacher.equals(req.user._id)) {
+        return res.status(403).json({ message: 'Not your class' });
+      }
+
+      const initialLength = cls.students.length;
+
+      cls.students = cls.students.filter(
+        s => (s.rollNumber || '').toLowerCase() !== rollNumber
+      );
+
+      if (cls.students.length === initialLength) {
+        return res.status(404).json({ message: 'Student not found' });
+      }
+
+      await cls.save();
+
+      res.json({ message: 'Student removed successfully' });
+
+    } catch (err) {
+      console.error('DELETE STUDENT ERROR:', err);
+      res.status(500).json({ message: 'Server error' });
+    }
+  }
+);
+
+
+/* Delete all students */
+router.delete(
+  '/:classKey/students',
+  authMiddleware,
+  requireRole('teacher'),
+  async (req, res) => {
+    try {
+      const decodedKey = decodeURIComponent(req.params.classKey)
+        .trim()
+        .toLowerCase();
+
+      const cls = await ClassModel.findOne({
+        classKey: { $regex: `^${decodedKey}$`, $options: 'i' }
+      });
+
+      if (!cls) {
+        return res.status(404).json({ message: 'Class not found' });
+      }
+
+      if (!cls.teacher.equals(req.user._id)) {
+        return res.status(403).json({ message: 'Not your class' });
+      }
+
+      cls.students = [];
+      await cls.save();
+
+      res.json({ message: 'All students removed successfully' });
+
+    } catch (err) {
+      console.error('DELETE ALL STUDENTS ERROR:', err);
+      res.status(500).json({ message: 'Server error' });
+    }
+  }
+);
 // Download student list (teacher)
-// GET /api/class/:classKey/download-students
-*/
 router.get('/:classKey/download-students', authMiddleware, requireRole('teacher'), async (req, res) => {
   try {
     const { classKey } = req.params;
@@ -194,89 +301,81 @@ router.get('/:classKey/download-students', authMiddleware, requireRole('teacher'
     res.status(500).json({ message: 'Server error' });
   }
 });
-/* Delete all students */
-router.delete('/:classKey/students', authMiddleware, requireRole('teacher'), async (req, res) => {
-  try {
-    const classKey = (req.params.classKey || '').toLowerCase();
-    const cls = await ClassModel.findOne({ classKey });
-    if (!cls) return res.status(404).json({ message: 'Class not found' });
-    if (!cls.teacher.equals(req.user._id)) return res.status(403).json({ message: 'Not your class' });
 
-    cls.students = [];
-    await cls.save();
-    res.json({ message: 'Students cleared' });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Server error' });
-  }
-});
-
-/* Create assignment */
-// router.post('/:classKey/assignment', authMiddleware, requireRole('teacher'), async (req, res) => {
-//   try {
-//     const classKey = (req.params.classKey || '').toLowerCase();
-//     const { title, description, dueDate } = req.body;
-//     const cls = await ClassModel.findOne({ classKey });
-//     if (!cls) return res.status(404).json({ message: 'Class not found' });
-//     if (!cls.teacher.equals(req.user._id)) return res.status(403).json({ message: 'Not your class' });
-
-//     cls.assignments.push({ title, description, dueDate });
-//     await cls.save();
-//     res.json({ message: 'Assignment created', assignments: cls.assignments });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ message: 'Server error' });
-//   }
-// });
-
-/* Student join (Option A: only if roll exists in uploaded list) */
+/* Student join (Option A: only if email in uploaded list) */
 router.post('/join', authMiddleware, requireRole('student'), async (req, res) => {
   try {
-    const { className, subjectCode, rollNumber } = req.body;
-    if (!className || !subjectCode || !rollNumber) return res.status(400).json({ message: 'Missing fields' });
+    const { className, subjectCode } = req.body;
+    const email = (req.user.email || '').trim().toLowerCase();
+
+    if (!className || !subjectCode)
+      return res.status(400).json({ message: 'Missing className or subjectCode' });
+
+    // Step 1: Make class key
     const classKey = makeClassKey(className, subjectCode);
-    const cls = await ClassModel.findOne({ classKey });
+
+    // Step 2: Find class by key (case-insensitive)
+    const cls = await findClassByKeySafe(classKey);
+
     if (!cls) return res.status(404).json({ message: 'Class not found' });
 
-    const rollLower = rollNumber.toString().trim().toLowerCase();
-    const idx = cls.students.findIndex(s => (s.rollNumber||'').toString().trim().toLowerCase() === rollLower);
-    if (idx === -1) {
-      return res.status(400).json({ message: 'Your roll number is not in the teacher-uploaded list' });
-    }
+    // Step 3: Check if student email exists in class students list
+    const student = cls.students.find(
+      s => (s.email || '').trim().toLowerCase() === email
+    );
 
-    cls.students[idx].status = 'Joined';
-    cls.students[idx].joinedAt = new Date();
-    if (!cls.students[idx].name) cls.students[idx].name = req.user.name || '';
+    if (!student)
+      return res.status(404).json({ message: 'Your email is not in the student list for this class' });
+
+    // Step 4: Check if already joined
+    if (student.status === 'Joined')
+      return res.status(400).json({ message: 'You have already joined this class' });
+
+    // Step 5: Mark as joined
+    student.status = 'Joined';
+    student.joinedAt = new Date();
+
     await cls.save();
 
-    return res.json({ message: 'Joined class', classKey: cls.classKey });
+    res.json({ message: 'Joined class successfully', class: cls });
+
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Server error' });
+    console.error('JOIN ERROR:', err);
+    res.status(500).json({ message: 'Failed to join class' });
   }
 });
-/* Student: get my joined classes (by rollNumber) */
-router.get('/my', authMiddleware, requireRole('student'), async (req, res) => {
-  try {
-    const userRoll = (req.user.rollNumber || '').toString().trim().toLowerCase();
-    const classes = await ClassModel.find({ 'students.rollNumber': { $exists: true } })
-      .select('className subjectCode classKey teacher assignments students');
+// GET /api/class/classes - get all joined classes for a student
+router.get(
+  '/classes',
+  authMiddleware,
+  requireRole('student'),
+  async (req, res) => {
+    try {
+      const email = (req.user.email || '').trim().toLowerCase();
 
-    const my = classes.filter(cls => {
-      return cls.students.some(s => (s.rollNumber||'').toString().trim().toLowerCase() === userRoll && s.status === 'Joined');
-    }).map(cls => ({
-      className: cls.className,
-      subjectCode: cls.subjectCode,
-      classKey: cls.classKey,
-      teacher: cls.teacher,
-      assignments: cls.assignments
-    }));
+      if (!email) {
+        return res.status(400).json({ message: 'Student email missing' });
+      }
 
-    res.json({ classes: my });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Server error' });
+      const classes = await ClassModel.find({
+        students: {
+          $elemMatch: {
+            email: { $regex: `^${email}$`, $options: 'i' },
+            status: 'Joined'
+          }
+        }
+      }).select(
+        'className subjectCode classKey teacher createdAt'
+      );
+
+      res.json({ classes }); // ✅ EXACT SHAPE DASHBOARD EXPECTS
+
+    } catch (err) {
+      console.error('FETCH STUDENT CLASSES ERROR:', err);
+      res.status(500).json({ message: 'Failed to fetch classes' });
+    }
   }
-});
+);
+
 
 module.exports = router;

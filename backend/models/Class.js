@@ -2,7 +2,9 @@
 const mongoose = require('mongoose');
 
 const studentSchema = new mongoose.Schema({
+  _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
   name: { type: String, default: '' },
+   email: { type: String }, 
   rollNumber: { type: String, required: true }, // store as original case but compare lowercased
   status: { type: String, enum: ['Pending','Joined'], default: 'Pending' },
   joinedAt: { type: Date, default: null },
