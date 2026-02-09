@@ -88,6 +88,31 @@ router.delete(
   }
 );
 
+// ✅ GET /api/class/classes  (STUDENT DASHBOARD)
+router.get(
+  '/classes',
+  authMiddleware,
+  requireRole('student'),
+  async (req, res) => {
+    try {
+      const email = (req.user.email || '').trim().toLowerCase();
+
+      const classes = await ClassModel.find({
+        students: {
+          $elemMatch: {
+            email,
+            status: 'Joined'
+          }
+        }
+      }).select('className subjectCode classKey createdAt');
+
+      res.json({ classes });
+    } catch (err) {
+      console.error('GET CLASSES ERROR:', err);
+      res.status(500).json({ message: 'Server error' });
+    }
+  }
+);
 
 /* Get class details */
 router.get('/:classKey', authMiddleware, async (req, res) => {
@@ -101,21 +126,44 @@ router.get('/:classKey', authMiddleware, async (req, res) => {
       return res.json({ class: cls });
     }
 
-    // if student -> check if student joined
+    // // if student -> check if student joined
+    // if (req.user.role === 'student') {
+    //   const joined = cls.students.some(s => s.email === req.user.email || s.rollNumber === req.user.rollNumber);
+    //   if (!joined) return res.status(403).json({ message: 'You have not joined this class' });
+    //   // return class info without other students
+    //   const safe = {
+    //     teacher: cls.teacher,
+    //     className: cls.className,
+    //     subjectCode: cls.subjectCode,
+    //     classKey: cls.classKey,
+    //     assignments: cls.assignments,
+    //     createdAt: cls.createdAt
+    //   };
+    //   return res.json({ class: safe });
+    // }
     if (req.user.role === 'student') {
-      const joined = cls.students.some(s => s.email === req.user.email || s.rollNumber === req.user.rollNumber);
-      if (!joined) return res.status(403).json({ message: 'You have not joined this class' });
-      // return class info without other students
-      const safe = {
-        teacher: cls.teacher,
-        className: cls.className,
-        subjectCode: cls.subjectCode,
-        classKey: cls.classKey,
-        assignments: cls.assignments,
-        createdAt: cls.createdAt
-      };
-      return res.json({ class: safe });
+  const joined = cls.students.some(
+    s =>
+      (s.email || '').toLowerCase() ===
+      (req.user.email || '').toLowerCase() &&
+      s.status === 'Joined'
+  );
+
+  if (!joined)
+    return res.status(403).json({ message: 'You have not joined this class' });
+
+  return res.json({
+    class: {
+      teacher: cls.teacher,
+      className: cls.className,
+      subjectCode: cls.subjectCode,
+      classKey: cls.classKey,
+      assignments: cls.assignments,
+      createdAt: cls.createdAt
     }
+  });
+}
+
     res.status(403).json({ message: 'Forbidden' });
   } catch (err) { console.error(err); res.status(500).json({ message: 'Server error' }); }
 });
@@ -302,80 +350,56 @@ router.get('/:classKey/download-students', authMiddleware, requireRole('teacher'
   }
 });
 
-/* Student join (Option A: only if email in uploaded list) */
-router.post('/join', authMiddleware, requireRole('student'), async (req, res) => {
-  try {
-    const { className, subjectCode } = req.body;
-    const email = (req.user.email || '').trim().toLowerCase();
-
-    if (!className || !subjectCode)
-      return res.status(400).json({ message: 'Missing className or subjectCode' });
-
-    // Step 1: Make class key
-    const classKey = makeClassKey(className, subjectCode);
-
-    // Step 2: Find class by key (case-insensitive)
-    const cls = await findClassByKeySafe(classKey);
-
-    if (!cls) return res.status(404).json({ message: 'Class not found' });
-
-    // Step 3: Check if student email exists in class students list
-    const student = cls.students.find(
-      s => (s.email || '').trim().toLowerCase() === email
-    );
-
-    if (!student)
-      return res.status(404).json({ message: 'Your email is not in the student list for this class' });
-
-    // Step 4: Check if already joined
-    if (student.status === 'Joined')
-      return res.status(400).json({ message: 'You have already joined this class' });
-
-    // Step 5: Mark as joined
-    student.status = 'Joined';
-    student.joinedAt = new Date();
-
-    await cls.save();
-
-    res.json({ message: 'Joined class successfully', class: cls });
-
-  } catch (err) {
-    console.error('JOIN ERROR:', err);
-    res.status(500).json({ message: 'Failed to join class' });
-  }
-});
-// GET /api/class/classes - get all joined classes for a student
-router.get(
-  '/classes',
+router.post(
+  '/join',
   authMiddleware,
   requireRole('student'),
   async (req, res) => {
     try {
+      const { className, subjectCode } = req.body;
       const email = (req.user.email || '').trim().toLowerCase();
 
-      if (!email) {
-        return res.status(400).json({ message: 'Student email missing' });
-      }
+      if (!className || !subjectCode)
+        return res.status(400).json({ message: 'Missing fields' });
 
-      const classes = await ClassModel.find({
-        students: {
-          $elemMatch: {
-            email: { $regex: `^${email}$`, $options: 'i' },
-            status: 'Joined'
-          }
-        }
-      }).select(
-        'className subjectCode classKey teacher createdAt'
+      const classKey = makeClassKey(className, subjectCode);
+      const cls = await findClassByKeySafe(classKey);
+
+      if (!cls)
+        return res.status(404).json({ message: 'Class not found' });
+
+      // 🔥 EMAIL BASED MATCH
+      const student = cls.students.find(
+        s => (s.email || '').toLowerCase() === email
       );
 
-      res.json({ classes }); // ✅ EXACT SHAPE DASHBOARD EXPECTS
+      if (!student)
+        return res.status(403).json({
+          message: 'You are not added to this class by the teacher'
+        });
+
+      if (student.status === 'Joined')
+        return res.status(400).json({ message: 'Already joined' });
+
+      student.status = 'Joined';
+      student.joinedAt = new Date();
+
+      await cls.save();
+
+      res.json({
+        message: 'Class joined successfully',
+        class: {
+          className: cls.className,
+          subjectCode: cls.subjectCode,
+          classKey: cls.classKey
+        }
+      });
 
     } catch (err) {
-      console.error('FETCH STUDENT CLASSES ERROR:', err);
-      res.status(500).json({ message: 'Failed to fetch classes' });
+      console.error('JOIN ERROR:', err);
+      res.status(500).json({ message: 'Join failed' });
     }
   }
 );
-
 
 module.exports = router;
